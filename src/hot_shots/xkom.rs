@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{NaiveDateTime};
 use rusqlite::{params, Connection};
 use serde::Deserialize;
 use std::{borrow::Borrow, marker::PhantomData};
@@ -21,7 +21,7 @@ pub(crate) struct XKomHotShot {
     #[serde(rename = "PromotionName")]
     promotion_name: String,
     #[serde(rename = "PromotionEnd")]
-    promotion_end: DateTime<Utc>,
+    promotion_end: NaiveDateTime,
     #[serde(rename = "Product")]
     product: XKomProduct,
 }

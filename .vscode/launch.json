@@ -20,7 +20,11 @@
                 }
             },
             "args": ["xkom"],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "sourceMap": {
+                "/rustc/*": "${env:HOME}/.rustup/toolchains/nightly-aarch64-unknown-linux-gnu/lib/rustlib/src/rust"
+            },
+            "sourceLanguages": ["rust"]
         },
         {
             "type": "lldb",
