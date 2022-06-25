@@ -47,7 +47,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build();
 
     print!("db connection...");
-    let conn = Connection::open("db.sqlite").unwrap();
+    let conn = Connection::open("./db.sqlite").unwrap();
     println!("works");
     
     db::migrate(&conn)?;
@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .inspect(|_| println!("and then store"))
         .and_then(|data| hs.store(&conn, data))?;
 
-    println!("bye!");
+    // println!("bye!");
 
     Ok(())
 }
