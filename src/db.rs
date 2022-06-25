@@ -10,9 +10,11 @@ pub fn migrate(conn: &Connection) -> Result<(), Box<dyn Error>> {
         .query_row("SELECT MAX(id) FROM migrations", [], |row| row.get(0))
         .unwrap_or(0);
 
+    println!("starting migration level: {}", level);
+
     while level < MAX_MIGRATIONS {
         let migrator = match level {
-            1 => lvl1,
+            0 => lvl1,
             _ => lvl_max,
         };
 
@@ -20,8 +22,12 @@ pub fn migrate(conn: &Connection) -> Result<(), Box<dyn Error>> {
 
         level += 1;
 
-        conn.execute("UPDATE migrations SET id=?1", params![level])?;
+        conn.execute("INSERT INTO migrations (id) VALUES (?)", params![level])?;
+
+        println!("current migration level: {}", level);
     }
+
+    println!("end migration level: {}", level);
 
     Ok(())
 }
@@ -55,7 +61,8 @@ fn lvl1(conn: &Connection) -> rusqlite::Result<()> {
                 product_name TEXT NOT NULL,
                 product_category_id TEXT NOT NULL,
                 product_category_name_singular TEXT NOT NULL,
-                product_web_url TEXT NOT NULL
+                product_web_url TEXT NOT NULL,
+                created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
             )
         ",
         [],

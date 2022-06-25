@@ -43,27 +43,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let agent = ureq::AgentBuilder::new()
         .timeout(Duration::from_secs(5))
-        .user_agent("hotshots/0")
+        .user_agent(&format!("hotshots/{}", env!("CARGO_PKG_VERSION")))
         .build();
 
     print!("db connection...");
-
     let conn = Connection::open("db.sqlite").unwrap();
-
     println!("works");
+    
     db::migrate(&conn)?;
 
-    println!("configuring scraper...");
+    print!("configuring scraper...");
     let req = hs.configure_scraper(&agent);
+    println!("done");
 
-    println!("request perform");
+    print!("request perform...");
     let rsp = req.call()?;
+    println!("done");
 
     print!("transform response...");
 
     hs.transform_response(rsp)
         .inspect(|_| println!("and then store"))
         .and_then(|data| hs.store(&conn, data))?;
+
+    println!("bye!");
 
     Ok(())
 }

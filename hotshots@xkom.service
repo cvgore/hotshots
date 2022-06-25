@@ -1,0 +1,10 @@
+[Unit]
+Description=HotShots %i scraper
+
+[Service]
+Type=oneshot
+StandardOutput=journal
+ExecStart=/path/to/binary %i
+
+[Install]
+WantedBy=default.target

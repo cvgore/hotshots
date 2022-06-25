@@ -1,0 +1,10 @@
+[Unit]
+Description=Run HotShots xkom periodically
+
+[Timer]
+OnCalendar=*-*-* 21:45:00
+OnCalendar=*-*-* 09:45:00
+RandomizedDelaySec=600
+
+[Install]
+WantedBy=timers.target

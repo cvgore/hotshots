@@ -1,11 +1,12 @@
 use rusqlite::Connection;
+use serde::Deserialize;
 use std::io;
 use ureq::{Agent, Request, Response};
 
 pub mod xkom;
 
-pub(crate) trait HotShotSource {
-    type Output;
+pub(crate) trait HotShotSource<'h> {
+    type Output: Deserialize<'h>;
 
     fn check_configuration(&self) -> Result<(), String>;
     fn configure_scraper(&self, agent: &Agent) -> Request;

@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use rusqlite::{params, Connection};
 use serde::Deserialize;
-use std::borrow::Borrow;
+use std::{borrow::Borrow, marker::PhantomData};
 use ureq::{Agent, Request, Response};
 
 #[derive(Deserialize)]
@@ -46,9 +46,9 @@ pub(crate) struct XKomProduct {
     web_url: String,
 }
 
-pub(crate) struct HotShot;
+pub(crate) struct HotShot<'h>(PhantomData<&'h ()>);
 
-impl crate::hot_shots::HotShotSource for HotShot {
+impl<'h> crate::hot_shots::HotShotSource<'h> for HotShot<'h> {
     type Output = XKomHotShot;
 
     fn check_configuration(&self) -> Result<(), String> {
@@ -71,7 +71,7 @@ impl crate::hot_shots::HotShotSource for HotShot {
     fn store(&self, db_conn: &Connection, response: Self::Output) -> std::io::Result<()> {
         let exists = db_conn
             .query_row::<i64, _, _>(
-                "SELECT 1 FROM hs_xkom WHERE id = ?1",
+                "SELECT 1 FROM hs_xkom WHERE id = ?",
                 params![response.id],
                 |row| row.get(0),
             )
@@ -87,12 +87,12 @@ impl crate::hot_shots::HotShotSource for HotShot {
                 "
             INSERT INTO hs_xkom
             (
-             id, price, old_price, promotion_total_count, sale_count, max_buy_count, promotion_name,
-             promotion_end, product_id, product_name, product_category_id,
-             product_category_name_singular, product_web_url
+                id, price, old_price, promotion_total_count, sale_count, max_buy_count, promotion_name,
+                promotion_end, product_id, product_name, product_category_id,
+                product_category_name_singular, product_web_url
             )
             VALUES
-            (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)
+            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ",
                 params![
                     response.id,
@@ -121,6 +121,6 @@ impl crate::hot_shots::HotShotSource for HotShot {
     }
 
     fn new() -> Self {
-        Self {}
+        Self (PhantomData)
     }
 }
