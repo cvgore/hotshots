@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .inspect(|_| println!("and then store"))
         .and_then(|data| hs.store(&conn, data))?;
 
-    // println!("bye!");
+    println!("bye!");
 
     Ok(())
 }
